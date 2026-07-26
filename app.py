@@ -3,9 +3,20 @@ import pandas as pd
 import plotly.graph_objects as go
 import random
 import os
+import re
+import numpy as np
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
+from PIL import Image
+
+# Try to import OCR libraries – fallback if not installed
+try:
+    import cv2
+    import pytesseract
+    OCR_AVAILABLE = True
+except ImportError:
+    OCR_AVAILABLE = False
 
 # ============================================================
 # DATA GENERATION FUNCTIONS
@@ -14,11 +25,10 @@ from enum import Enum
 def generate_all_data():
     """Generate all data files if they don't exist"""
     
-    # Create data directory
     if not os.path.exists('data'):
         os.makedirs('data')
     
-    # Drugs data (simplified list)
+    # Drugs data
     drugs = [
         ["D001", "Warfarin", "Anticoagulant", "CYP2C9", "Oral", 10, "mg", "Bleeding|Nausea", "Active bleeding|Pregnancy", "INR weekly", "X"],
         ["D002", "Metformin", "Antidiabetic", "Renal excretion", "Oral", 2550, "mg", "GI upset|Lactic acidosis", "eGFR<30|Heart failure", "Renal function monthly", "B"],
@@ -99,7 +109,7 @@ def generate_all_data():
     ])
     interactions_df.to_csv('data/interactions.csv', index=False)
     
-    # Patients data (20 sample patients)
+    # Patients data
     first_names = ["Rajesh", "Lakshmi", "Abdul", "Sneha", "Vikram", "Meera", "Ram",
                    "Sunita", "Anand", "Priya", "Ravi", "Anita", "Suresh", "Kavita",
                    "Mohan", "Radha", "Vijay", "Deepa", "Rajiv", "Sarita"]
@@ -142,13 +152,60 @@ def generate_all_data():
             'Comorbidities': '|'.join(selected_comorbidities),
             'Allergies': '',
             'Smoking': random.choices(["No", "Former", "Current"], weights=[0.6, 0.3, 0.1])[0],
-            'Alcohol': random.choices(["None", "Occasional", "Moderate", "Heavy"], weights=[0.5, 0.3, 0.15, 0.05])[0]
+            'Alcohol': random.choices(["None", "Occasional", "Moderate", "Heavy"], weights=[0.5, 0.3, 0.15, 0.05])[0],
+            'SystolicBP': random.randint(110, 180),
+            'DiastolicBP': random.randint(70, 100)
         })
     
     patients_df = pd.DataFrame(patients)
     patients_df.to_csv('data/patients.csv', index=False)
     
     print("✅ All data files generated successfully!")
+
+
+# ============================================================
+# BP SCANNING FUNCTION (OCR)
+# ============================================================
+
+def extract_bp_from_image(image_file) -> tuple:
+    """Extract Systolic/Diastolic BP from an image using OCR"""
+    if not OCR_AVAILABLE:
+        return None, None
+    
+    try:
+        # Read image
+        img = Image.open(image_file)
+        img_cv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        
+        # Preprocess
+        gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
+        _, thresh = cv2.threshold(gray, 150, 255, cv2.THRESH_BINARY)
+        
+        # OCR
+        text = pytesseract.image_to_string(thresh)
+        
+        # Look for patterns like "120/80" or "120 / 80"
+        patterns = [
+            r'(\d{2,3})\s*/\s*(\d{2,3})',
+            r'(\d{2,3})\s*mmHg',
+            r'BP\s*[:=]\s*(\d{2,3})\s*/\s*(\d{2,3})'
+        ]
+        
+        for pattern in patterns:
+            match = re.search(pattern, text)
+            if match:
+                if len(match.groups()) == 2:
+                    return int(match.group(1)), int(match.group(2))
+                elif len(match.groups()) == 1:
+                    # If only one number found, try to find another
+                    numbers = re.findall(r'\d{2,3}', text)
+                    if len(numbers) >= 2:
+                        return int(numbers[0]), int(numbers[1])
+        
+        return None, None
+    except Exception:
+        return None, None
+
 
 # ============================================================
 # DSS ENGINE CLASSES
@@ -198,6 +255,8 @@ class Patient:
     allergies: List[str]
     smoking: str
     alcohol: str
+    systolic_bp: int = 120
+    diastolic_bp: int = 80
 
 class DrugInteractionAnalyzer:
     def __init__(self, drugs_csv_path: str, interactions_csv_path: str):
@@ -243,20 +302,30 @@ class DrugInteractionAnalyzer:
 
     def get_patient_modifiers(self, patient: Patient) -> Dict[str, float]:
         modifiers = {}
+        
+        # Age modifiers
         if patient.age >= 85:
             modifiers['age_very_elderly'] = 2.0
         elif patient.age >= 75:
             modifiers['age_elderly'] = 1.5
+        
+        # Renal function modifiers
         if patient.egfr < 30:
             modifiers['renal_impairment'] = 2.0
         elif patient.egfr < 45:
             modifiers['renal_moderate'] = 1.5
+        
+        # Hepatic function
         if patient.liver_function == 'Abnormal':
             modifiers['hepatic_impairment'] = 1.8
         elif patient.liver_function == 'MildlyImpaired':
             modifiers['hepatic_mild'] = 1.3
+        
+        # BMI
         if patient.bmi < 18.5:
             modifiers['low_bmi'] = 1.3
+        
+        # Polypharmacy
         med_count = len(patient.medications)
         if med_count >= 10:
             modifiers['polypharmacy_10'] = 2.0
@@ -264,10 +333,23 @@ class DrugInteractionAnalyzer:
             modifiers['polypharmacy_8'] = 1.8
         elif med_count >= 5:
             modifiers['polypharmacy_5'] = 1.4
+        
+        # Comorbidities
         if 'Heart Failure' in patient.comorbidities:
             modifiers['heart_failure'] = 1.5
+        
+        # Smoking
         if patient.smoking == 'Current':
             modifiers['smoking'] = 1.2
+        
+        # ============================================================
+        # NEW: BP MODIFIERS
+        # ============================================================
+        if patient.systolic_bp >= 180 or patient.diastolic_bp >= 120:
+            modifiers['severe_hypertension'] = 1.6
+        elif patient.systolic_bp >= 140 or patient.diastolic_bp >= 90:
+            modifiers['uncontrolled_hypertension'] = 1.3
+        
         return modifiers
 
     def detect_interactions(self, medication_list: List[str]) -> List[Interaction]:
@@ -358,7 +440,9 @@ class DrugInteractionAnalyzer:
             comorbidities=patient.comorbidities,
             allergies=patient.allergies,
             smoking=patient.smoking,
-            alcohol=patient.alcohol
+            alcohol=patient.alcohol,
+            systolic_bp=patient.systolic_bp,
+            diastolic_bp=patient.diastolic_bp
         )
         
         new_analysis = self.analyze_patient(new_patient)
@@ -381,6 +465,7 @@ class DrugInteractionAnalyzer:
             'recommendation': recommendation
         }
 
+
 # ============================================================
 # STREAMLIT UI
 # ============================================================
@@ -394,6 +479,10 @@ def main():
     .interaction-severe { background-color: #FFE5E5; border-left: 5px solid #FF0000; padding: 0.5rem; margin: 0.5rem 0; border-radius: 0.3rem; }
     .interaction-moderate { background-color: #FFF3E5; border-left: 5px solid #FF6600; padding: 0.5rem; margin: 0.5rem 0; border-radius: 0.3rem; }
     .interaction-mild { background-color: #FFFFE5; border-left: 5px solid #FFCC00; padding: 0.5rem; margin: 0.5rem 0; border-radius: 0.3rem; }
+    .bp-normal { background-color: #d4edda; padding: 5px 10px; border-radius: 5px; display: inline-block; }
+    .bp-elevated { background-color: #fff3cd; padding: 5px 10px; border-radius: 5px; display: inline-block; }
+    .bp-high { background-color: #f8d7da; padding: 5px 10px; border-radius: 5px; display: inline-block; }
+    .bp-severe { background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 5px; display: inline-block; }
     </style>
     """, unsafe_allow_html=True)
     
@@ -401,7 +490,7 @@ def main():
     st.markdown("### Medication Safety Decision Support System")
     st.markdown("---")
     
-    # Load analyzer (cached)
+    # Load analyzer
     @st.cache_resource
     def load_analyzer():
         return DrugInteractionAnalyzer('data/drugs.csv', 'data/interactions.csv')
@@ -413,9 +502,29 @@ def main():
         generate_all_data()
         st.rerun()
     
-    # Sidebar
+    # ============================================================
+    # BP SCAN FEATURE IN SIDEBAR
+    # ============================================================
     with st.sidebar:
         st.header("👤 Patient Management")
+        
+        # BP Scan section
+        with st.expander("📷 Scan BP from Image", expanded=False):
+            if OCR_AVAILABLE:
+                uploaded_file = st.file_uploader("Upload BP monitor photo", type=["jpg", "jpeg", "png"])
+                if uploaded_file is not None:
+                    if st.button("🔍 Extract BP Reading"):
+                        systolic, diastolic = extract_bp_from_image(uploaded_file)
+                        if systolic and diastolic:
+                            st.success(f"✅ Detected: {systolic}/{diastolic} mmHg")
+                            st.session_state['scanned_sys'] = systolic
+                            st.session_state['scanned_dia'] = diastolic
+                        else:
+                            st.error("❌ Could not detect BP. Please try a clearer image.")
+            else:
+                st.warning("⚠️ OCR libraries not installed. Run: pip install opencv-python pytesseract pillow numpy")
+                st.info("You can still enter BP manually below.")
+        
         patient_option = st.radio("Select Patient", ["Load Sample Patient", "Create New Patient"])
         
         if patient_option == "Load Sample Patient":
@@ -438,19 +547,62 @@ def main():
                         comorbidities=patient_data['Comorbidities'].split('|') if pd.notna(patient_data['Comorbidities']) else [],
                         allergies=patient_data['Allergies'].split('|') if pd.notna(patient_data['Allergies']) else [],
                         smoking=patient_data['Smoking'] if pd.notna(patient_data['Smoking']) else 'No',
-                        alcohol=patient_data['Alcohol'] if pd.notna(patient_data['Alcohol']) else 'None'
+                        alcohol=patient_data['Alcohol'] if pd.notna(patient_data['Alcohol']) else 'None',
+                        systolic_bp=int(patient_data.get('SystolicBP', 120)),
+                        diastolic_bp=int(patient_data.get('DiastolicBP', 80))
                     )
                     st.success(f"✅ Loaded patient: {patient.name}")
             except FileNotFoundError:
                 st.error("⚠️ Data files not found. Please generate data first.")
                 st.stop()
         else:
+            # Create New Patient Form
             name = st.text_input("Full Name", "John Doe")
             age = st.number_input("Age", min_value=18, max_value=120, value=72)
             gender = st.selectbox("Gender", ["M", "F"])
             bmi = st.number_input("BMI", min_value=10.0, max_value=50.0, value=22.4)
             egfr = st.number_input("eGFR (mL/min)", min_value=5, max_value=120, value=45)
             liver_function = st.selectbox("Liver Function", ["Normal", "MildlyImpaired", "Abnormal"])
+            
+            # ============================================================
+            # BP INPUT SECTION
+            # ============================================================
+            st.subheader("🩸 Blood Pressure")
+            
+            # Use scanned values if available, otherwise default
+            default_sys = st.session_state.get('scanned_sys', 120)
+            default_dia = st.session_state.get('scanned_dia', 80)
+            
+            col_bp1, col_bp2 = st.columns(2)
+            with col_bp1:
+                systolic_bp = st.number_input("Systolic BP (mmHg)", min_value=80, max_value=250, value=default_sys)
+            with col_bp2:
+                diastolic_bp = st.number_input("Diastolic BP (mmHg)", min_value=50, max_value=150, value=default_dia)
+            
+            # BP Status display
+            if systolic_bp < 120 and diastolic_bp < 80:
+                bp_status = "🟢 Normal"
+                bp_class = "bp-normal"
+            elif systolic_bp < 130 and diastolic_bp < 80:
+                bp_status = "🟡 Elevated"
+                bp_class = "bp-elevated"
+            elif systolic_bp < 140 or diastolic_bp < 90:
+                bp_status = "🟠 High (Stage 1)"
+                bp_class = "bp-high"
+            elif systolic_bp >= 140 or diastolic_bp >= 90:
+                bp_status = "🔴 High (Stage 2)"
+                bp_class = "bp-severe"
+            else:
+                bp_status = "🟢 Normal"
+                bp_class = "bp-normal"
+            
+            st.markdown(f"**Status:** <span class='{bp_class}'>{bp_status}</span>", unsafe_allow_html=True)
+            
+            # Clear scanned values after use
+            if st.session_state.get('scanned_sys'):
+                st.session_state['scanned_sys'] = None
+                st.session_state['scanned_dia'] = None
+            
             all_drugs = list(analyzer.drugs.keys())
             medications = st.multiselect("Current Medications", all_drugs)
             comorbidities_text = st.text_input("Comorbidities (comma-separated)", "")
@@ -473,11 +625,15 @@ def main():
                     comorbidities=comorbidities,
                     allergies=allergies,
                     smoking=smoking,
-                    alcohol=alcohol
+                    alcohol=alcohol,
+                    systolic_bp=systolic_bp,
+                    diastolic_bp=diastolic_bp
                 )
                 st.success(f"✅ Created patient: {patient.name}")
     
-    # Main content
+    # ============================================================
+    # MAIN CONTENT
+    # ============================================================
     if 'patient' in locals():
         try:
             analysis = analyzer.analyze_patient(patient)
@@ -512,6 +668,11 @@ def main():
                 st.markdown(f"**Gender:** {patient.gender}")
                 st.markdown(f"**BMI:** {patient.bmi:.1f}")
                 st.markdown(f"**eGFR:** {patient.egfr:.0f} mL/min")
+                # Display BP in summary
+                bp_display = f"{patient.systolic_bp}/{patient.diastolic_bp} mmHg"
+                if patient.systolic_bp >= 140 or patient.diastolic_bp >= 90:
+                    bp_display += " ⚠️"
+                st.markdown(f"**BP:** {bp_display}")
                 st.markdown(f"**Medications:** {len(patient.medications)}")
             
             with col3:
@@ -587,34 +748,35 @@ def main():
                         st.markdown(f"<h2 style='color:{'green' if result['new_risk'] < result['original_risk'] else 'red'}'>{result['new_risk']:.0f}</h2>", unsafe_allow_html=True)
                     
                     st.markdown(f"**Recommendation:** {result['recommendation']}")
-
+            
             # ============================================================
-            # 📤 EXPORT REPORT - DOWNLOAD OPTION (ADDED HERE)
+            # 📤 EXPORT REPORT - DOWNLOAD OPTION
             # ============================================================
             st.markdown("---")
             st.markdown("### 📤 Export Report")
             if st.button("Generate Report"):
                 report = f"""
-    # RxCompanion Clinical Report
+# RxCompanion Clinical Report
 
-    ## Patient Information
-    - Name: {patient.name}
-    - Age: {patient.age}
-    - Gender: {patient.gender}
-    - BMI: {patient.bmi:.1f}
-    - eGFR: {patient.egfr:.0f}
-    - Liver Function: {patient.liver_function}
+## Patient Information
+- Name: {patient.name}
+- Age: {patient.age}
+- Gender: {patient.gender}
+- BMI: {patient.bmi:.1f}
+- eGFR: {patient.egfr:.0f}
+- Liver Function: {patient.liver_function}
+- Blood Pressure: {patient.systolic_bp}/{patient.diastolic_bp} mmHg
 
-    ## Risk Assessment
-    - Risk Score: {analysis['risk_score']:.1f}/100
-    - Risk Level: {analysis['risk_level']}
+## Risk Assessment
+- Risk Score: {analysis['risk_score']:.1f}/100
+- Risk Level: {analysis['risk_level']}
 
-    ## Interactions Detected: {len(analysis['interactions'])}
+## Interactions Detected: {len(analysis['interactions'])}
 
-    ## Recommendations
-    """
-                for i, suggestion in enumerate(analysis['deprescribing_suggestions'][:3]):
-                    report += f"\n{i+1}. Consider reviewing {suggestion['drug']} (Priority: {suggestion['priority']})"
+## Recommendations
+"""
+                for i, suggestion in enumerate(analysis['deprescribing_suggestions'][:5]):
+                    report += f"\n{i+1}. Consider reviewing {suggestion['drug']} (Priority: {suggestion['priority']}, Risk Contribution: {suggestion['risk_contribution']:.1f})"
 
                 st.download_button(
                     label="Download Report",
