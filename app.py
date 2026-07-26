@@ -471,7 +471,7 @@ class DrugInteractionAnalyzer:
 # ============================================================
 
 def main():
-    st.set_page_config(page_title="RxCompanion - Medication Safety DSS", page_icon="💊", layout="wide")
+    st.set_page_config(page_title="RxCompanion - AI- Assisted Polypharmacy Risk Analyzer", page_icon="💊", layout="wide")
     
     st.markdown("""
     <style>
@@ -487,7 +487,7 @@ def main():
     """, unsafe_allow_html=True)
     
     st.markdown('<div class="main-header">💊 RxCompanion</div>', unsafe_allow_html=True)
-    st.markdown("### Medication Safety Decision Support System")
+    st.markdown("### AI- Assisted Polypharmacy Risk Analyzer")
     st.markdown("---")
     
     # Load analyzer
