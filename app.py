@@ -94,7 +94,7 @@ DOSE_ADJUSTMENT_RULES = {
         {"min": 0, "max": 3.0, "text": "SEVERE HYPOKALEMIA. Reduce dose or add K+ supplement.", "level": "critical"},
         {"min": 3.0, "max": 3.5, "text": "Mild hypokalemia. Monitor K+ and consider supplementation.", "level": "warning"},
     ]},
-    "Insulin Glargine": {"egfr_rules": [
+    "Insulin": {"egfr_rules": [
         {"min": 50, "max": 999, "text": "No adjustment required.", "level": "normal"},
         {"min": 0, "max": 50, "text": "Reduce dose by 20-30% (insulin clearance reduced). Monitor glucose closely.", "level": "warning"},
     ]},
@@ -236,7 +236,7 @@ def generate_pdf_report(patient, analysis, dose_adjustments) -> bytes:
 
 
 # ============================================================
-# DATA GENERATION – ALL 20 PATIENTS FROM CSV
+# DATA GENERATION – ALL 20 PATIENTS
 # ============================================================
 def generate_all_data():
     if not os.path.exists("data"):
@@ -315,42 +315,102 @@ def generate_all_data():
     pd.DataFrame(ix, columns=["InteractionID", "DrugA", "DrugB", "Severity", "Mechanism",
         "Recommendation", "EvidenceLevel", "TimeToOnset", "MonitoringRequired"]).to_csv("data/interactions.csv", index=False)
 
-    # ---------------- PATIENTS – ALL 20 FROM CSV ----------------
+    # ---------------- PATIENTS – ALL 20 FROM YOUR CSV ----------------
     patients_data = [
         # PatientID, Name, Age, Gender, BMI, eGFR, LiverFunction, Medications, Comorbidities, Allergies, Smoking, Alcohol, Creatinine, Potassium, Sodium, Hemoglobin, SystolicBP, DiastolicBP
-        ["P001", "Rajesh Kumar", 72, "M", 22.4, 45, "Normal", "Warfarin|Aspirin|Lisinopril|Furosemide|Metoprolol|Simvastatin", "Hypertension|Atrial Fibrillation|CHF", "", "Former", "Mild", 1.5, 5.2, 138, 11.8, 145, 88],
-        ["P002", "Lakshmi Iyer", 68, "F", 31.5, 62, "MildlyImpaired", "Metformin|Losartan|Amlodipine|Digoxin|Furosemide", "Diabetes|Hypertension|Heart Failure", "Penicillin", "No", "None", 1.1, 4.3, 140, 12.5, 138, 84],
-        ["P003", "Abdul Rahman", 80, "M", 18.2, 28, "Normal", "Warfarin|Metformin|Lisinopril|Aspirin", "Diabetes|Atrial Fibrillation|CKD", "", "No", "None", 2.4, 5.6, 136, 10.2, 152, 92],
-        ["P004", "Sneha Patel", 74, "F", 24.8, 55, "Normal", "Simvastatin|Omeprazole|Clopidogrel|Lisinopril|Metformin", "Diabetes|CAD|GERD", "Sulfa", "No", "None", 1.2, 4.5, 139, 12.1, 132, 82],
-        ["P005", "Vikram Singh", 69, "M", 27.3, 35, "MildlyImpaired", "Furosemide|Spironolactone|Digoxin|Warfarin|Allopurinol", "Heart Failure|Atrial Fibrillation|Gout", "NSAIDs", "Former", "Occasional", 1.9, 5.4, 137, 11.5, 148, 90],
-        ["P006", "Meera Nair", 65, "F", 29.1, 72, "Normal", "Gabapentin|Tramadol|Metoprolol|Omeprazole", "Neuropathy|Hypertension|GERD", "Codine", "No", "None", 0.95, 4.1, 141, 13.0, 128, 80],
-        ["P007", "Ram Shastri", 78, "M", 20.5, 24, "Abnormal", "Ciprofloxacin|Warfarin|Insulin|Metformin", "Diabetes|Atrial Fibrillation|CKD", "", "No", "None", 2.8, 5.8, 134, 9.8, 158, 95],
-        ["P008", "Sunita Desai", 71, "F", 26.7, 48, "Normal", "Aspirin|Atorvastatin|Lisinopril|Metformin|Dapagliflozin", "Diabetes|CAD|Hypertension", "", "No", "None", 1.4, 4.6, 138, 12.3, 136, 84],
-        ["P009", "Anand Gupta", 66, "M", 30.2, 58, "Normal", "Celecoxib|Warfarin|Amlodipine|Metoprolol", "Osteoarthritis|Atrial Fibrillation|Hypertension", "Aspirin", "Former", "Moderate", 1.15, 4.4, 140, 12.8, 142, 86],
-        ["P010", "Priya Joshi", 77, "F", 21.8, 32, "MildlyImpaired", "Levothyroxine|Metformin|Lisinopril|Insulin|Metoprolol", "Hypothyroidism|Diabetes|Hypertension|CKD", "Codine", "No", "None", 2.1, 5.3, 136, 10.5, 150, 90],
-        ["P011", "Ravi Deshmukh", 73, "M", 25.6, 42, "Normal", "Prednisolone|Warfarin|Omeprazole|Metformin", "COPD|Atrial Fibrillation|Diabetes", "Penicillin", "Current", "Occasional", 1.6, 4.7, 138, 11.9, 144, 88],
-        ["P012", "Anita Sharma", 70, "F", 28.4, 65, "Normal", "Metformin|Empagliflozin|Losartan|Amlodipine|Atorvastatin", "Diabetes|Hypertension|Hyperlipidemia", "", "No", "None", 1.05, 4.2, 140, 12.6, 134, 82],
-        ["P013", "Suresh Reddy", 79, "M", 19.7, 29, "Normal", "Digoxin|Furosemide|Warfarin|Lisinopril|Spironolactone", "Heart Failure|Atrial Fibrillation|CKD", "NSAIDs", "No", "None", 2.3, 5.5, 135, 10.0, 155, 92],
-        ["P014", "Kavita Rao", 67, "F", 32.5, 70, "Normal", "Dapagliflozin|Metformin|Losartan|Furosemide|Simvastatin", "Diabetes|Hypertension|Heart Failure", "", "No", "None", 0.98, 4.0, 141, 12.9, 130, 80],
-        ["P015", "Mohan Lal", 82, "M", 20.1, 22, "MildlyImpaired", "Warfarin|Aspirin|Atorvastatin|Lisinopril|Insulin", "Atrial Fibrillation|CAD|Diabetes|CKD", "", "No", "None", 3.0, 5.7, 133, 9.5, 160, 96],
-        ["P016", "Radha Krishnan", 75, "F", 23.9, 50, "Normal", "Metformin|Glimepiride|Losartan|Amlodipine|Rosuvastatin", "Diabetes|Hypertension|Hyperlipidemia", "Sulfa", "No", "None", 1.35, 4.5, 139, 12.2, 138, 84],
-        ["P017", "Vijay Tendulkar", 64, "M", 26.8, 68, "Normal", "Tramadol|Gabapentin|Metoprolol|Losartan|Omeprazole", "Neuropathy|Hypertension|GERD", "Tramadol", "Former", "Occasional", 1.0, 4.3, 141, 13.2, 132, 82],
-        ["P018", "Deepa Sharma", 69, "F", 24.2, 44, "Normal", "Diltiazem|Simvastatin|Warfarin|Lisinopril|Metformin", "Atrial Fibrillation|Hypertension|Diabetes", "", "No", "None", 1.55, 4.8, 138, 11.7, 140, 86],
-        ["P019", "Rajiv Gupta", 71, "M", 27.9, 38, "Normal", "Aspirin|Clopidogrel|Atorvastatin|Ramipril|Insulin", "CAD|Diabetes|Hypertension", "Codine", "Current", "Moderate", 1.8, 4.9, 137, 11.6, 146, 88],
-        ["P020", "Sarita Patel", 76, "F", 21.2, 26, "MildlyImpaired", "Warfarin|Digoxin|Furosemide|Lisinopril|Allopurinol", "Heart Failure|Atrial Fibrillation|Gout|CKD", "Penicillin", "No", "None", 2.6, 5.6, 134, 10.3, 154, 92],
+        ["P001", "Rajesh Kumar", 72, "M", 22.4, 45, "Normal",
+         "Warfarin|Aspirin|Lisinopril|Furosemide|Metoprolol|Simvastatin",
+         "Hypertension|Atrial Fibrillation|CHF", "", "Former", "Mild",
+         1.5, 5.2, 138, 11.8, 145, 88],
+        ["P002", "Lakshmi Iyer", 68, "F", 31.5, 62, "MildlyImpaired",
+         "Metformin|Losartan|Amlodipine|Digoxin|Furosemide",
+         "Diabetes|Hypertension|Heart Failure", "Penicillin", "No", "None",
+         1.1, 4.3, 140, 12.5, 138, 84],
+        ["P003", "Abdul Rahman", 80, "M", 18.2, 28, "Normal",
+         "Warfarin|Metformin|Lisinopril|Aspirin",
+         "Diabetes|Atrial Fibrillation|CKD", "", "No", "None",
+         2.4, 5.6, 136, 10.2, 152, 92],
+        ["P004", "Sneha Patel", 74, "F", 24.8, 55, "Normal",
+         "Simvastatin|Omeprazole|Clopidogrel|Lisinopril|Metformin",
+         "Diabetes|CAD|GERD", "Sulfa", "No", "None",
+         1.2, 4.5, 139, 12.1, 132, 82],
+        ["P005", "Vikram Singh", 69, "M", 27.3, 35, "MildlyImpaired",
+         "Furosemide|Spironolactone|Digoxin|Warfarin|Allopurinol",
+         "Heart Failure|Atrial Fibrillation|Gout", "NSAIDs", "Former", "Occasional",
+         1.9, 5.4, 137, 11.5, 148, 90],
+        ["P006", "Meera Nair", 65, "F", 29.1, 72, "Normal",
+         "Gabapentin|Tramadol|Metoprolol|Omeprazole",
+         "Neuropathy|Hypertension|GERD", "Codine", "No", "None",
+         0.95, 4.1, 141, 13.0, 128, 80],
+        ["P007", "Ram Shastri", 78, "M", 20.5, 24, "Abnormal",
+         "Ciprofloxacin|Warfarin|Insulin|Metformin",
+         "Diabetes|Atrial Fibrillation|CKD", "", "No", "None",
+         2.8, 5.8, 134, 9.8, 158, 95],
+        ["P008", "Sunita Desai", 71, "F", 26.7, 48, "Normal",
+         "Aspirin|Atorvastatin|Lisinopril|Metformin|Dapagliflozin",
+         "Diabetes|CAD|Hypertension", "", "No", "None",
+         1.4, 4.6, 138, 12.3, 136, 84],
+        ["P009", "Anand Gupta", 66, "M", 30.2, 58, "Normal",
+         "Celecoxib|Warfarin|Amlodipine|Metoprolol",
+         "Osteoarthritis|Atrial Fibrillation|Hypertension", "Aspirin", "Former", "Moderate",
+         1.15, 4.4, 140, 12.8, 142, 86],
+        ["P010", "Priya Joshi", 77, "F", 21.8, 32, "MildlyImpaired",
+         "Levothyroxine|Metformin|Lisinopril|Insulin|Metoprolol",
+         "Hypothyroidism|Diabetes|Hypertension|CKD", "Codine", "No", "None",
+         2.1, 5.3, 136, 10.5, 150, 90],
+        ["P011", "Ravi Deshmukh", 73, "M", 25.6, 42, "Normal",
+         "Prednisolone|Warfarin|Omeprazole|Metformin",
+         "COPD|Atrial Fibrillation|Diabetes", "Penicillin", "Current", "Occasional",
+         1.6, 4.7, 138, 11.9, 144, 88],
+        ["P012", "Anita Sharma", 70, "F", 28.4, 65, "Normal",
+         "Metformin|Empagliflozin|Losartan|Amlodipine|Atorvastatin",
+         "Diabetes|Hypertension|Hyperlipidemia", "", "No", "None",
+         1.05, 4.2, 140, 12.6, 134, 82],
+        ["P013", "Suresh Reddy", 79, "M", 19.7, 29, "Normal",
+         "Digoxin|Furosemide|Warfarin|Lisinopril|Spironolactone",
+         "Heart Failure|Atrial Fibrillation|CKD", "NSAIDs", "No", "None",
+         2.3, 5.5, 135, 10.0, 155, 92],
+        ["P014", "Kavita Rao", 67, "F", 32.5, 70, "Normal",
+         "Dapagliflozin|Metformin|Losartan|Furosemide|Simvastatin",
+         "Diabetes|Hypertension|Heart Failure", "", "No", "None",
+         0.98, 4.0, 141, 12.9, 130, 80],
+        ["P015", "Mohan Lal", 82, "M", 20.1, 22, "MildlyImpaired",
+         "Warfarin|Aspirin|Atorvastatin|Lisinopril|Insulin",
+         "Atrial Fibrillation|CAD|Diabetes|CKD", "", "No", "None",
+         3.0, 5.7, 133, 9.5, 160, 96],
+        ["P016", "Radha Krishnan", 75, "F", 23.9, 50, "Normal",
+         "Metformin|Glimepiride|Losartan|Amlodipine|Rosuvastatin",
+         "Diabetes|Hypertension|Hyperlipidemia", "Sulfa", "No", "None",
+         1.35, 4.5, 139, 12.2, 138, 84],
+        ["P017", "Vijay Tendulkar", 64, "M", 26.8, 68, "Normal",
+         "Tramadol|Gabapentin|Metoprolol|Losartan|Omeprazole",
+         "Neuropathy|Hypertension|GERD", "Tramadol", "Former", "Occasional",
+         1.0, 4.3, 141, 13.2, 132, 82],
+        ["P018", "Deepa Sharma", 69, "F", 24.2, 44, "Normal",
+         "Diltiazem|Simvastatin|Warfarin|Lisinopril|Metformin",
+         "Atrial Fibrillation|Hypertension|Diabetes", "", "No", "None",
+         1.55, 4.8, 138, 11.7, 140, 86],
+        ["P019", "Rajiv Gupta", 71, "M", 27.9, 38, "Normal",
+         "Aspirin|Clopidogrel|Atorvastatin|Ramipril|Insulin",
+         "CAD|Diabetes|Hypertension", "Codine", "Current", "Moderate",
+         1.8, 4.9, 137, 11.6, 146, 88],
+        ["P020", "Sarita Patel", 76, "F", 21.2, 26, "MildlyImpaired",
+         "Warfarin|Digoxin|Furosemide|Lisinopril|Allopurinol",
+         "Heart Failure|Atrial Fibrillation|Gout|CKD", "Penicillin", "No", "None",
+         2.6, 5.6, 134, 10.3, 154, 92],
     ]
 
     rows = []
     for p in patients_data:
         rows.append({
             "PatientID": p[0], "Name": p[1], "Age": p[2], "Gender": p[3], "BMI": p[4],
-            "eGFR": p[5], "LiverFunction": p[6], "Medications": p[7], "Comorbidities": p[8],
-            "Allergies": p[9], "Smoking": p[10], "Alcohol": p[11],
+            "eGFR": p[5], "LiverFunction": p[6], "Medications": p[7],
+            "Comorbidities": p[8], "Allergies": p[9], "Smoking": p[10], "Alcohol": p[11],
             "Creatinine": p[12], "Potassium": p[13], "Sodium": p[14],
             "Hemoglobin": p[15], "SystolicBP": p[16], "DiastolicBP": p[17],
         })
     pd.DataFrame(rows).to_csv("data/patients.csv", index=False)
-    print(f"✅ Generated {len(rows)} patients from CSV")
+    print(f"✅ Generated {len(rows)} patients")
 
 
 # ============================================================
@@ -620,7 +680,6 @@ def main():
     if "what_if_result" not in st.session_state:
         st.session_state.what_if_result = None
 
-    # ---------------- SIDEBAR ----------------
     with st.sidebar:
         st.markdown("### Patient Management")
         st.markdown("---")
@@ -655,7 +714,6 @@ def main():
 
         if mode == "Load Sample Patient":
             df = pd.read_csv("data/patients.csv")
-            # Show all 20 patients
             name = st.selectbox("Select Patient", df["Name"].tolist())
             if name and st.button("Load Patient", use_container_width=True):
                 r = df[df["Name"] == name].iloc[0]
@@ -717,7 +775,6 @@ def main():
                 st.session_state.what_if_result = None
                 st.success(f"Analyzed: {name}")
 
-    # ---------------- MAIN ----------------
     patient = st.session_state.patient
     if patient is None:
         st.info("Select or create a patient from the sidebar to begin.")
