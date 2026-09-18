@@ -1,0 +1,51 @@
+DrugID,DrugName,DrugClass,Metabolism,Route,MaxDailyDose,Unit,CommonSideEffects,Contraindications,MonitoringRequired,PregnancyRisk
+D001,Warfarin,Anticoagulant,CYP2C9,Oral,10.0,mg,Bleeding|Nausea,Active bleeding|Pregnancy,INR weekly,X
+D002,Metformin,Antidiabetic,Renal excretion,Oral,2550.0,mg,GI upset|Lactic acidosis,eGFR<30|Heart failure,Renal function monthly,B
+D003,Lisinopril,ACE Inhibitor,Renal excretion,Oral,40.0,mg,Cough|Hyperkalemia|Angioedema,Pregnancy|Bilateral renal stenosis,K+ weekly,D
+D004,Amlodipine,Calcium Channel Blocker,CYP3A4,Oral,10.0,mg,Edema|Dizziness|Flushing,Hypotension,BP weekly,C
+D005,Simvastatin,Statin,CYP3A4,Oral,40.0,mg,Myopathy|Liver toxicity|Diabetes,Pregnancy|Active liver disease,LFTs quarterly,X
+D006,Digoxin,Cardiac glycoside,Renal excretion,Oral,0.25,mg,Arrhythmia|Nausea|Visual changes,Hypokalemia|AV block,Digoxin level quarterly,C
+D007,Furosemide,Loop diuretic,Renal excretion,Oral,80.0,mg,Electrolyte imbalance|Dehydration,Renal failure,Electrolytes weekly,C
+D008,Metoprolol,Beta-blocker,CYP2D6,Oral,200.0,mg,Bradycardia|Fatigue|Depression,Bradycardia|Asthma,HR weekly,C
+D009,Losartan,ARB,CYP2C9,Oral,100.0,mg,Hyperkalemia|Dizziness,Pregnancy|Bilateral renal stenosis,K+ weekly,D
+D010,Aspirin,Antiplatelet,Hydrolysis,Oral,325.0,mg,GI bleeding|Ulcers,Active bleeding|Asthma,GI symptoms quarterly,C
+D011,Atorvastatin,Statin,CYP3A4,Oral,80.0,mg,Myopathy|Liver toxicity,Pregnancy|Active liver disease,LFTs quarterly,X
+D012,Clopidogrel,Antiplatelet,CYP2C19,Oral,75.0,mg,Bleeding|GI upset,Active bleeding|Liver disease,CBC quarterly,B
+D013,Omeprazole,PPI,CYP2C19,Oral,40.0,mg,Gastric polyps|B12 deficiency,Long-term use,Mag/B12 yearly,C
+D014,Dapagliflozin,SGLT2 inhibitor,UGT1A9,Oral,10.0,mg,UTI|Dehydration|Euglycemic DKA,eGFR<30,Volume status monthly,C
+D015,Insulin Glargine,Insulin,Subcutaneous,Subcutaneous,100.0,units,Hypoglycemia|Weight gain,Hypoglycemia,Glucose daily,B
+D016,Levothyroxine,Thyroid hormone,Liver,Oral,200.0,mcg,Palpitations|Tachycardia,Untreated hyperthyroidism,TSH quarterly,A
+D017,Gabapentin,Anticonvulsant,Renal excretion,Oral,3600.0,mg,Drowsiness|Dizziness,CrCl<15,Creatinine monthly,C
+D018,Tramadol,Opioid analgesic,CYP2D6,Oral,400.0,mg,Nausea|Dizziness|Seizures,Seizure disorder|MAOIs,Respiratory rate monthly,C
+D019,Celecoxib,COX-2 inhibitor,CYP2C9,Oral,200.0,mg,CV events|GI bleeding,NSAID allergy|Severe heart disease,BP monthly,C
+D020,Allopurinol,Xanthine oxidase inhibitor,Renal excretion,Oral,800.0,mg,Rash|Hepatotoxicity,CrCl<30,Creatinine monthly,B
+D021,Spironolactone,Aldosterone antagonist,CYP3A4,Oral,100.0,mg,Hyperkalemia|Gynecomastia,Addison's disease,K+ weekly,B
+D022,Ciprofloxacin,Antibiotic,CYP1A2,Oral,1500.0,mg,Tendonitis|QT prolongation,CYP1A2 interactions,ECG if risk,B
+D023,Prednisolone,Corticosteroid,CYP3A4,Oral,60.0,mg,Hyperglycemia|Immunosuppression,Active infection,Glucose weekly,C
+D024,Diltiazem,Calcium Channel Blocker,CYP3A4,Oral,360.0,mg,Bradycardia|Heart block|Edema,Hypotension|AV block,HR weekly,C
+D025,Carvedilol,Beta-blocker,CYP2D6,Oral,50.0,mg,Bradycardia|Hypotension|Dizziness,Asthma|2nd degree AV block,BP weekly,C
+D026,Ramipril,ACE Inhibitor,Renal excretion,Oral,10.0,mg,Cough|Hyperkalemia|Angioedema,Pregnancy,K+ quarterly,D
+D027,Rosuvastatin,Statin,CYP2C9,Oral,40.0,mg,Myopathy|Liver toxicity|Diabetes,Pregnancy|Active liver disease,LFTs quarterly,X
+D028,Hydrochlorothiazide,Thiazide diuretic,Renal excretion,Oral,25.0,mg,Hypokalemia|Hyperglycemia,Sulfa allergy,Electrolytes quarterly,B
+D029,Empagliflozin,SGLT2 inhibitor,UGT1A9,Oral,25.0,mg,UTI|Dehydration|Euglycemic DKA,eGFR<30,Volume status monthly,C
+D030,Glimepiride,Sulfonylurea,CYP2C9,Oral,8.0,mg,Hypoglycemia|Weight gain,Sulfa allergy|eGFR<30,Glucose daily,C
+D031,Pioglitazone,Thiazolidinedione,CYP2C8,Oral,45.0,mg,Edema|Heart failure|Weight gain,Heart failure NYHA III/IV,Weight monthly,C
+D032,Sitagliptin,DPP-4 inhibitor,Renal excretion,Oral,100.0,mg,Pancreatitis|Arthralgia,eGFR<30,Renal function monthly,B
+D033,Fenofibrate,Fibrate,UGT1A9,Oral,160.0,mg,Myopathy|Gallstones,Liver disease|Severe renal,Creatinine monthly,C
+D034,Apixaban,Direct Xa inhibitor,CYP3A4,Oral,10.0,mg,Bleeding|Hepatotoxicity,Active bleeding|Severe liver,Creatinine quarterly,C
+D035,Rivaroxaban,Direct Xa inhibitor,CYP3A4,Oral,20.0,mg,Bleeding|Hepatotoxicity,Active bleeding|Severe liver,Creatinine quarterly,C
+D036,Dabigatran,Direct thrombin inhibitor,P-gp,Oral,300.0,mg,Bleeding|Dyspepsia,Active bleeding|CrCl<30,Creatinine quarterly,C
+D037,Enoxaparin,LMWH,Renal excretion,Subcutaneous,80.0,mg,Bleeding|Thrombocytopenia,Active bleeding|HIT,Platelets monthly,B
+D038,Erythropoietin,Hormone,Liver,Subcutaneous,40000.0,units,Thrombosis|Hypertension,Hemoglobin>12|Uncontrolled HTN,BP weekly,B
+D039,Sevelamer,Phosphate binder,Oral,Oral,2400.0,mg,GI upset|Constipation,Bowel obstruction,Phosphate monthly,B
+D040,Calcium Carbonate,Calcium supplement,Oral,Oral,3000.0,mg,Hypercalcemia|Constipation,Hypercalcemia,Calcium monthly,B
+D041,Cinacalcet,Calcimimetic,CYP3A4,Oral,120.0,mg,Hypocalcemia|QT prolongation,Hypocalcemia,Calcium weekly,B
+D042,Calcitriol,Vitamin D analog,CYP3A4,Oral,1.0,mcg,Hypercalcemia|Hyperphosphatemia,Hypercalcemia,Calcium monthly,B
+D043,Iron Sucrose,Iron supplement,Oral,Oral,300.0,mg,GI upset|Constipation,Iron overload|Anaphylaxis,Ferritin monthly,B
+D044,Folic Acid,Vitamin B9,Oral,Oral,5.0,mg,GI upset,None,CBC monthly,A
+D045,Metronidazole,Antibiotic,CYP2C9,Oral,1500.0,mg,Nausea|Headache,Alcohol,Liver function,B
+D046,Amiodarone,Antiarrhythmic,CYP3A4,Oral,400.0,mg,Pulmonary toxicity|Thyroid,Liver disease,LFTs quarterly,D
+D047,Theophylline,Bronchodilator,CYP1A2,Oral,900.0,mg,Tachycardia|Seizures,CYP1A2 interactions,Theophylline level,C
+D048,Methotrexate,Immunosuppressant,Renal,Oral,25.0,mg,Hepatotoxicity|Myelosuppression,Renal impairment,CBC monthly,X
+D049,Insulin Aspart,Insulin,Subcutaneous,Subcutaneous,100.0,units,Hypoglycemia|Lipodystrophy,Hypoglycemia,Glucose daily,B
+D050,Thyroxine,Thyroid hormone,Liver,Oral,200.0,mcg,Palpitations|Tachycardia,Untreated hyperthyroidism,TSH quarterly,A

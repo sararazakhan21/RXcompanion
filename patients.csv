@@ -1,0 +1,21 @@
+PatientID,Name,Age,Gender,BMI,eGFR,LiverFunction,Medications,Comorbidities,Allergies,Smoking,Alcohol
+P001,Priya Patel,76,F,31.4,83.0,Normal,Carvedilol|Metoprolol|Simvastatin|Tramadol|Digoxin,Heart Failure,,Current,None
+P002,Sarita Sharma,73,F,29.0,90.0,Normal,Digoxin|Insulin Glargine|Ramipril|Atorvastatin|Metformin|Rosuvastatin|Prednisolone|Gabapentin,CKD,,No,Occasional
+P003,Suresh Patel,68,F,32.0,101.0,MildlyImpaired,Metoprolol|Celecoxib|Rosuvastatin|Furosemide|Insulin Glargine,Heart Failure|GERD,,Former,None
+P004,Radha Sharma,71,F,31.0,118.0,Normal,Warfarin|Metoprolol|Furosemide|Ciprofloxacin,Osteoarthritis|Heart Failure,,Current,Occasional
+P005,Rajiv Joshi,75,M,27.0,106.0,Normal,Tramadol|Omeprazole|Lisinopril|Digoxin|Furosemide|Empagliflozin|Prednisolone|Metformin,Gout|CKD|Hypothyroidism,,No,Occasional
+P006,Rajesh Gupta,68,M,30.1,111.0,Normal,Amlodipine|Metformin|Ciprofloxacin|Empagliflozin|Warfarin|Atorvastatin|Carvedilol,CKD,,Former,Occasional
+P007,Anita Sharma,81,M,30.7,98.0,MildlyImpaired,Losartan|Ciprofloxacin|Gabapentin|Ramipril|Clopidogrel|Levothyroxine|Hydrochlorothiazide,Atrial Fibrillation|Neuropathy|Diabetes|Hypothyroidism,,No,Occasional
+P008,Kavita Deshmukh,71,F,23.8,99.0,Normal,Dapagliflozin|Carvedilol|Clopidogrel|Metoprolol|Omeprazole|Empagliflozin|Insulin Glargine,Osteoarthritis|Hypothyroidism|Diabetes|COPD,,No,None
+P009,Rajesh Joshi,75,M,19.6,83.0,MildlyImpaired,Spironolactone|Aspirin|Gabapentin|Prednisolone|Atorvastatin,Gout,,No,Moderate
+P010,Deepa Tendulkar,75,F,22.9,101.0,Normal,Spironolactone|Digoxin|Diltiazem|Simvastatin|Hydrochlorothiazide|Omeprazole|Ciprofloxacin|Amlodipine,GERD|CAD,,No,None
+P011,Radha Krishnan,74,M,26.4,98.0,Normal,Dapagliflozin|Hydrochlorothiazide|Simvastatin|Celecoxib,Hypertension|COPD|Heart Failure|GERD,,Former,None
+P012,Sneha Sharma,68,F,31.9,102.0,MildlyImpaired,Aspirin|Gabapentin|Furosemide|Digoxin|Dapagliflozin|Diltiazem,Gout,,No,None
+P013,Meera Rao,80,F,20.5,98.0,Normal,Digoxin|Lisinopril|Warfarin|Amlodipine|Dapagliflozin,CKD,,No,Occasional
+P014,Sneha Desai,67,F,27.3,115.0,Normal,Amlodipine|Rosuvastatin|Atorvastatin|Gabapentin|Allopurinol,CAD|Neuropathy|Osteoarthritis|GERD,,No,None
+P015,Suresh Gupta,73,F,18.8,100.0,Normal,Allopurinol|Lisinopril|Warfarin|Diltiazem,Hypothyroidism|Osteoarthritis|CAD,,No,None
+P016,Deepa Krishnan,72,M,33.9,88.0,Normal,Atorvastatin|Carvedilol|Levothyroxine|Warfarin|Prednisolone,Osteoarthritis|Heart Failure|Neuropathy|Hyperlipidemia,,No,None
+P017,Rajesh Gupta,73,M,27.7,94.0,Normal,Metformin|Metoprolol|Aspirin|Hydrochlorothiazide|Tramadol|Rosuvastatin|Gabapentin,Osteoarthritis|Hyperlipidemia|Gout,,Current,None
+P018,Sneha Sharma,85,M,26.3,75.0,Normal,Allopurinol|Levothyroxine|Empagliflozin|Amlodipine|Carvedilol|Atorvastatin|Aspirin|Ciprofloxacin,Hypothyroidism,,No,None
+P019,Kavita Gupta,67,M,30.5,102.0,MildlyImpaired,Prednisolone|Ramipril|Allopurinol|Diltiazem|Metformin|Celecoxib|Metoprolol,Hyperlipidemia|Diabetes|Hypothyroidism|Gout,,No,None
+P020,Suresh Tendulkar,80,F,18.7,92.0,Normal,Hydrochlorothiazide|Spironolactone|Atorvastatin|Furosemide,Hypothyroidism|Diabetes|Atrial Fibrillation|GERD,,Former,Occasional

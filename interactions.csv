@@ -1,0 +1,41 @@
+InteractionID,DrugA,DrugB,Severity,Mechanism,Recommendation,EvidenceLevel,TimeToOnset,MonitoringRequired
+I001,Warfarin,Aspirin,Severe,Increased bleeding risk,Avoid combination,Strong,Immediate,INR weekly|CBC monthly
+I002,Warfarin,Simvastatin,Moderate,Increased INR,Reduce warfarin dose,Moderate,3-7 days,INR weekly
+I003,Warfarin,Ciprofloxacin,Severe,INR increase,Avoid if possible,Strong,2-5 days,INR daily
+I004,Warfarin,Amiodarone,Severe,INR increase,Reduce warfarin dose,Strong,1-2 weeks,INR weekly
+I005,Warfarin,Celecoxib,Moderate,Increased bleeding risk,Monitor for bleeding,Moderate,Immediate,INR weekly
+I006,Warfarin,Clopidogrel,Severe,Bleeding risk,Avoid if possible,Strong,Immediate,INR weekly|CBC monthly
+I007,Warfarin,Allopurinol,Moderate,Increased INR,Reduce warfarin dose,Moderate,3-5 days,INR weekly
+I008,Warfarin,Omeprazole,Moderate,Increased INR,Monitor INR,Weak,3-7 days,INR weekly
+I009,Warfarin,Furosemide,Moderate,Decreased warfarin effect,Monitor INR,Weak,3-5 days,INR weekly|BP weekly
+I010,Warfarin,Metronidazole,Severe,INR increase,Avoid if possible,Strong,2-5 days,INR daily
+I011,Lisinopril,Furosemide,Moderate,Hypotension risk,Monitor BP,Strong,Immediate,BP daily|Electrolytes weekly
+I012,Lisinopril,Losartan,Severe,Hyperkalemia risk,Avoid combination,Strong,1-2 weeks,K+ weekly|Creatinine weekly
+I013,Lisinopril,Spironolactone,Severe,Hyperkalemia risk,Avoid combination,Strong,1-2 weeks,K+ weekly|Creatinine weekly
+I014,Lisinopril,Aspirin,Moderate,Reduced ACE effect,Monitor BP,Weak,1-3 days,BP weekly
+I015,Lisinopril,Metformin,Moderate,Lactic acidosis risk,Monitor renal function,Moderate,1-4 weeks,Creatinine monthly
+I016,Lisinopril,Digoxin,Moderate,Digoxin toxicity,Monitor K+,Moderate,1-2 weeks,K+ weekly|Digoxin level
+I017,Metformin,Furosemide,Moderate,Lactic acidosis risk,Monitor renal function,Moderate,1-4 weeks,Creatinine monthly
+I018,Metformin,Digoxin,Moderate,Digoxin toxicity,Monitor digoxin levels,Moderate,1-2 weeks,Digoxin level quarterly
+I019,Metformin,Ciprofloxacin,Moderate,Increased metformin levels,Monitor renal function,Moderate,1-3 days,Creatinine monthly
+I020,Digoxin,Furosemide,Moderate,Hypokalemia increases toxicity,Monitor K+,Strong,1-7 days,K+ weekly|Digoxin level
+I021,Digoxin,Amlodipine,Moderate,Increased digoxin levels,Monitor digoxin levels,Moderate,3-5 days,Digoxin level quarterly
+I022,Digoxin,Spironolactone,Moderate,Increased digoxin levels,Monitor digoxin levels,Moderate,3-5 days,Digoxin level quarterly
+I023,Amlodipine,Simvastatin,Moderate,Increased statin toxicity,Limit simvastatin dose,Strong,1-2 weeks,LFTs quarterly
+I024,Amlodipine,Metoprolol,Mild,Bradycardia risk,Monitor HR,Moderate,Immediate,HR weekly
+I025,Amlodipine,Diltiazem,Mild,Heart block risk,Monitor HR,Moderate,Immediate,HR weekly
+I026,Amlodipine,Atorvastatin,Moderate,Increased statin toxicity,Limit atorvastatin dose,Strong,1-2 weeks,LFTs quarterly
+I027,Aspirin,Clopidogrel,Severe,Bleeding risk,Use only when necessary,Strong,Immediate,CBC monthly
+I028,Aspirin,Apixaban,Severe,Bleeding risk,Avoid if possible,Strong,Immediate,CBC monthly
+I029,Aspirin,Omeprazole,Moderate,Reduced antiplatelet effect,Use pantoprazole,Moderate,3-5 days,GI symptoms
+I030,Atorvastatin,Clopidogrel,Moderate,Reduced clopidogrel effect,Consider pravastatin,Weak,3-7 days,CBC if symptoms
+I031,Omeprazole,Clopidogrel,Moderate,Reduced clopidogrel effect,Use pantoprazole,Strong,3-5 days,CBC if symptoms
+I032,Omeprazole,Digoxin,Moderate,Increased digoxin levels,Monitor digoxin levels,Moderate,5-7 days,Digoxin level quarterly
+I033,Dapagliflozin,Furosemide,Moderate,Dehydration risk,Monitor volume status,Moderate,Immediate,BP weekly
+I034,Dapagliflozin,Insulin,Moderate,Hypoglycemia risk,Reduce insulin dose,Strong,Immediate,Glucose daily
+I035,Dapagliflozin,Metformin,Moderate,Lactic acidosis risk,Monitor renal function,Moderate,1-4 weeks,Creatinine monthly
+I036,Insulin,Metoprolol,Moderate,Hypoglycemia symptoms masked,Monitor glucose closely,Moderate,Immediate,Glucose daily
+I037,Insulin,Metformin,Moderate,Hypoglycemia risk,Monitor glucose,Moderate,Immediate,Glucose daily
+I038,Insulin,Prednisolone,Severe,Hyperglycemia,Increase insulin dose,Strong,Immediate,Glucose daily
+I039,Spironolactone,Losartan,Severe,Hyperkalemia risk,Monitor K+ weekly,Strong,1-2 weeks,K+ weekly
+I040,Ramipril,Spironolactone,Severe,Hyperkalemia risk,Monitor K+ weekly,Strong,1-2 weeks,K+ weekly
