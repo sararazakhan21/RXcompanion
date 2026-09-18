@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-import random
 import os
 import io
 import numpy as np
@@ -237,11 +236,13 @@ def generate_pdf_report(patient, analysis, dose_adjustments) -> bytes:
 
 
 # ============================================================
-# DATA GENERATION
+# DATA GENERATION – ALL 20 PATIENTS FROM CSV
 # ============================================================
 def generate_all_data():
     if not os.path.exists("data"):
         os.makedirs("data")
+
+    # ---------------- DRUGS ----------------
     drugs = [
         ["D001", "Warfarin", "Anticoagulant", "CYP2C9", "Oral", 10, "mg", "Bleeding|Nausea", "Active bleeding|Pregnancy", "INR weekly", "X"],
         ["D002", "Metformin", "Antidiabetic", "Renal excretion", "Oral", 2550, "mg", "GI upset|Lactic acidosis", "eGFR<30|Heart failure", "Renal function monthly", "B"],
@@ -257,7 +258,7 @@ def generate_all_data():
         ["D012", "Clopidogrel", "Antiplatelet", "CYP2C19", "Oral", 75, "mg", "Bleeding|GI upset", "Active bleeding|Liver disease", "CBC quarterly", "B"],
         ["D013", "Omeprazole", "PPI", "CYP2C19", "Oral", 40, "mg", "Gastric polyps|B12 deficiency", "Long-term use", "Mag/B12 yearly", "C"],
         ["D014", "Dapagliflozin", "SGLT2 inhibitor", "UGT1A9", "Oral", 10, "mg", "UTI|Dehydration", "eGFR<30", "Volume status monthly", "C"],
-        ["D015", "Insulin Glargine", "Insulin", "Subcutaneous", "Subcutaneous", 100, "units", "Hypoglycemia|Weight gain", "Hypoglycemia", "Glucose daily", "B"],
+        ["D015", "Insulin", "Insulin", "Subcutaneous", "Subcutaneous", 100, "units", "Hypoglycemia|Weight gain", "Hypoglycemia", "Glucose daily", "B"],
         ["D016", "Levothyroxine", "Thyroid hormone", "Liver", "Oral", 200, "mcg", "Palpitations", "Untreated hyperthyroidism", "TSH quarterly", "A"],
         ["D017", "Gabapentin", "Anticonvulsant", "Renal excretion", "Oral", 3600, "mg", "Drowsiness|Dizziness", "CrCl<15", "Creatinine monthly", "C"],
         ["D018", "Tramadol", "Opioid analgesic", "CYP2D6", "Oral", 400, "mg", "Nausea|Dizziness|Seizures", "Seizure disorder|MAOIs", "Respiratory rate monthly", "C"],
@@ -278,6 +279,7 @@ def generate_all_data():
         "MaxDailyDose", "Unit", "CommonSideEffects", "Contraindications",
         "MonitoringRequired", "PregnancyRisk"]).to_csv("data/drugs.csv", index=False)
 
+    # ---------------- INTERACTIONS ----------------
     ix = [
         ["I001", "Warfarin", "Aspirin", "Severe", "Increased bleeding risk", "Avoid combination", "Strong", "Immediate", "INR weekly|CBC monthly"],
         ["I002", "Warfarin", "Simvastatin", "Moderate", "Increased INR", "Reduce warfarin dose", "Moderate", "3-7 days", "INR weekly"],
@@ -313,43 +315,42 @@ def generate_all_data():
     pd.DataFrame(ix, columns=["InteractionID", "DrugA", "DrugB", "Severity", "Mechanism",
         "Recommendation", "EvidenceLevel", "TimeToOnset", "MonitoringRequired"]).to_csv("data/interactions.csv", index=False)
 
-    first = ["Rajesh", "Lakshmi", "Abdul", "Sneha", "Vikram", "Meera", "Ram", "Sunita",
-             "Anand", "Priya", "Ravi", "Anita", "Suresh", "Kavita", "Mohan", "Radha",
-             "Vijay", "Deepa", "Rajiv", "Sarita"]
-    last = ["Kumar", "Iyer", "Rahman", "Patel", "Singh", "Nair", "Shastri", "Desai",
-            "Gupta", "Joshi", "Deshmukh", "Sharma", "Reddy", "Rao", "Lal", "Krishnan",
-            "Tendulkar", "Sharma", "Gupta", "Patel"]
-    meds = ["Warfarin", "Metformin", "Lisinopril", "Amlodipine", "Simvastatin", "Digoxin",
-            "Furosemide", "Metoprolol", "Losartan", "Aspirin", "Atorvastatin", "Clopidogrel",
-            "Omeprazole", "Dapagliflozin", "Insulin Glargine", "Levothyroxine", "Gabapentin",
-            "Tramadol", "Celecoxib", "Allopurinol", "Spironolactone", "Ciprofloxacin",
-            "Prednisolone", "Diltiazem", "Carvedilol", "Ramipril"]
-    comorbs = ["Hypertension", "Diabetes", "Atrial Fibrillation", "Heart Failure", "CKD",
-               "CAD", "Hyperlipidemia", "Osteoarthritis", "GERD", "Hypothyroidism",
-               "Neuropathy", "Gout", "COPD"]
+    # ---------------- PATIENTS – ALL 20 FROM CSV ----------------
+    patients_data = [
+        # PatientID, Name, Age, Gender, BMI, eGFR, LiverFunction, Medications, Comorbidities, Allergies, Smoking, Alcohol, Creatinine, Potassium, Sodium, Hemoglobin, SystolicBP, DiastolicBP
+        ["P001", "Rajesh Kumar", 72, "M", 22.4, 45, "Normal", "Warfarin|Aspirin|Lisinopril|Furosemide|Metoprolol|Simvastatin", "Hypertension|Atrial Fibrillation|CHF", "", "Former", "Mild", 1.5, 5.2, 138, 11.8, 145, 88],
+        ["P002", "Lakshmi Iyer", 68, "F", 31.5, 62, "MildlyImpaired", "Metformin|Losartan|Amlodipine|Digoxin|Furosemide", "Diabetes|Hypertension|Heart Failure", "Penicillin", "No", "None", 1.1, 4.3, 140, 12.5, 138, 84],
+        ["P003", "Abdul Rahman", 80, "M", 18.2, 28, "Normal", "Warfarin|Metformin|Lisinopril|Aspirin", "Diabetes|Atrial Fibrillation|CKD", "", "No", "None", 2.4, 5.6, 136, 10.2, 152, 92],
+        ["P004", "Sneha Patel", 74, "F", 24.8, 55, "Normal", "Simvastatin|Omeprazole|Clopidogrel|Lisinopril|Metformin", "Diabetes|CAD|GERD", "Sulfa", "No", "None", 1.2, 4.5, 139, 12.1, 132, 82],
+        ["P005", "Vikram Singh", 69, "M", 27.3, 35, "MildlyImpaired", "Furosemide|Spironolactone|Digoxin|Warfarin|Allopurinol", "Heart Failure|Atrial Fibrillation|Gout", "NSAIDs", "Former", "Occasional", 1.9, 5.4, 137, 11.5, 148, 90],
+        ["P006", "Meera Nair", 65, "F", 29.1, 72, "Normal", "Gabapentin|Tramadol|Metoprolol|Omeprazole", "Neuropathy|Hypertension|GERD", "Codine", "No", "None", 0.95, 4.1, 141, 13.0, 128, 80],
+        ["P007", "Ram Shastri", 78, "M", 20.5, 24, "Abnormal", "Ciprofloxacin|Warfarin|Insulin|Metformin", "Diabetes|Atrial Fibrillation|CKD", "", "No", "None", 2.8, 5.8, 134, 9.8, 158, 95],
+        ["P008", "Sunita Desai", 71, "F", 26.7, 48, "Normal", "Aspirin|Atorvastatin|Lisinopril|Metformin|Dapagliflozin", "Diabetes|CAD|Hypertension", "", "No", "None", 1.4, 4.6, 138, 12.3, 136, 84],
+        ["P009", "Anand Gupta", 66, "M", 30.2, 58, "Normal", "Celecoxib|Warfarin|Amlodipine|Metoprolol", "Osteoarthritis|Atrial Fibrillation|Hypertension", "Aspirin", "Former", "Moderate", 1.15, 4.4, 140, 12.8, 142, 86],
+        ["P010", "Priya Joshi", 77, "F", 21.8, 32, "MildlyImpaired", "Levothyroxine|Metformin|Lisinopril|Insulin|Metoprolol", "Hypothyroidism|Diabetes|Hypertension|CKD", "Codine", "No", "None", 2.1, 5.3, 136, 10.5, 150, 90],
+        ["P011", "Ravi Deshmukh", 73, "M", 25.6, 42, "Normal", "Prednisolone|Warfarin|Omeprazole|Metformin", "COPD|Atrial Fibrillation|Diabetes", "Penicillin", "Current", "Occasional", 1.6, 4.7, 138, 11.9, 144, 88],
+        ["P012", "Anita Sharma", 70, "F", 28.4, 65, "Normal", "Metformin|Empagliflozin|Losartan|Amlodipine|Atorvastatin", "Diabetes|Hypertension|Hyperlipidemia", "", "No", "None", 1.05, 4.2, 140, 12.6, 134, 82],
+        ["P013", "Suresh Reddy", 79, "M", 19.7, 29, "Normal", "Digoxin|Furosemide|Warfarin|Lisinopril|Spironolactone", "Heart Failure|Atrial Fibrillation|CKD", "NSAIDs", "No", "None", 2.3, 5.5, 135, 10.0, 155, 92],
+        ["P014", "Kavita Rao", 67, "F", 32.5, 70, "Normal", "Dapagliflozin|Metformin|Losartan|Furosemide|Simvastatin", "Diabetes|Hypertension|Heart Failure", "", "No", "None", 0.98, 4.0, 141, 12.9, 130, 80],
+        ["P015", "Mohan Lal", 82, "M", 20.1, 22, "MildlyImpaired", "Warfarin|Aspirin|Atorvastatin|Lisinopril|Insulin", "Atrial Fibrillation|CAD|Diabetes|CKD", "", "No", "None", 3.0, 5.7, 133, 9.5, 160, 96],
+        ["P016", "Radha Krishnan", 75, "F", 23.9, 50, "Normal", "Metformin|Glimepiride|Losartan|Amlodipine|Rosuvastatin", "Diabetes|Hypertension|Hyperlipidemia", "Sulfa", "No", "None", 1.35, 4.5, 139, 12.2, 138, 84],
+        ["P017", "Vijay Tendulkar", 64, "M", 26.8, 68, "Normal", "Tramadol|Gabapentin|Metoprolol|Losartan|Omeprazole", "Neuropathy|Hypertension|GERD", "Tramadol", "Former", "Occasional", 1.0, 4.3, 141, 13.2, 132, 82],
+        ["P018", "Deepa Sharma", 69, "F", 24.2, 44, "Normal", "Diltiazem|Simvastatin|Warfarin|Lisinopril|Metformin", "Atrial Fibrillation|Hypertension|Diabetes", "", "No", "None", 1.55, 4.8, 138, 11.7, 140, 86],
+        ["P019", "Rajiv Gupta", 71, "M", 27.9, 38, "Normal", "Aspirin|Clopidogrel|Atorvastatin|Ramipril|Insulin", "CAD|Diabetes|Hypertension", "Codine", "Current", "Moderate", 1.8, 4.9, 137, 11.6, 146, 88],
+        ["P020", "Sarita Patel", 76, "F", 21.2, 26, "MildlyImpaired", "Warfarin|Digoxin|Furosemide|Lisinopril|Allopurinol", "Heart Failure|Atrial Fibrillation|Gout|CKD", "Penicillin", "No", "None", 2.6, 5.6, 134, 10.3, 154, 92],
+    ]
+
     rows = []
-    for i in range(20):
-        age = random.randint(65, 85)
+    for p in patients_data:
         rows.append({
-            "PatientID": f"P{i+1:03d}",
-            "Name": f"{random.choice(first)} {random.choice(last)}",
-            "Age": age, "Gender": random.choice(["M", "F"]),
-            "BMI": round(random.uniform(18, 35), 1),
-            "eGFR": round(max(15, 120 - (age - 60) * 1.5 + random.uniform(-15, 15)), 0),
-            "Creatinine": round(random.uniform(0.8, 2.5), 2),
-            "Potassium": round(random.uniform(3.2, 5.8), 1),
-            "Sodium": round(random.uniform(130, 145), 0),
-            "Hemoglobin": round(random.uniform(9, 15), 1),
-            "LiverFunction": random.choices(["Normal", "MildlyImpaired", "Abnormal"], weights=[0.7, 0.2, 0.1])[0],
-            "Medications": "|".join(random.sample(meds, random.randint(4, 8))),
-            "Comorbidities": "|".join(random.sample(comorbs, random.randint(1, 4))),
-            "Allergies": "",
-            "Smoking": random.choices(["No", "Former", "Current"], weights=[0.6, 0.3, 0.1])[0],
-            "Alcohol": random.choices(["None", "Occasional", "Moderate", "Heavy"], weights=[0.5, 0.3, 0.15, 0.05])[0],
-            "SystolicBP": random.randint(110, 180),
-            "DiastolicBP": random.randint(70, 100),
+            "PatientID": p[0], "Name": p[1], "Age": p[2], "Gender": p[3], "BMI": p[4],
+            "eGFR": p[5], "LiverFunction": p[6], "Medications": p[7], "Comorbidities": p[8],
+            "Allergies": p[9], "Smoking": p[10], "Alcohol": p[11],
+            "Creatinine": p[12], "Potassium": p[13], "Sodium": p[14],
+            "Hemoglobin": p[15], "SystolicBP": p[16], "DiastolicBP": p[17],
         })
     pd.DataFrame(rows).to_csv("data/patients.csv", index=False)
+    print(f"✅ Generated {len(rows)} patients from CSV")
 
 
 # ============================================================
@@ -624,7 +625,6 @@ def main():
         st.markdown("### Patient Management")
         st.markdown("---")
 
-        # BP image upload + manual entry
         with st.expander("Blood Pressure Reading", expanded=False):
             bp_image = st.file_uploader(
                 "Upload BP monitor photo (optional reference)",
@@ -655,6 +655,7 @@ def main():
 
         if mode == "Load Sample Patient":
             df = pd.read_csv("data/patients.csv")
+            # Show all 20 patients
             name = st.selectbox("Select Patient", df["Name"].tolist())
             if name and st.button("Load Patient", use_container_width=True):
                 r = df[df["Name"] == name].iloc[0]
@@ -663,7 +664,7 @@ def main():
                     age=int(r["Age"]), gender=r["Gender"], bmi=float(r["BMI"]),
                     egfr=float(r["eGFR"]), liver_function=r["LiverFunction"],
                     medications=r["Medications"].split("|"),
-                    comorbidities=r["Comorbidities"].split("|") if pd.notna(r["Comorbidities"]) else [],
+                    comorbidities=r["Comorbidities"].split("|") if pd.notna(r["Comorbidities"]) and r["Comorbidities"] else [],
                     allergies=r["Allergies"].split("|") if pd.notna(r["Allergies"]) and r["Allergies"] else [],
                     smoking=r["Smoking"] if pd.notna(r["Smoking"]) else "No",
                     alcohol=r["Alcohol"] if pd.notna(r["Alcohol"]) else "None",
